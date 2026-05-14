@@ -1,0 +1,176 @@
+## ============================================================================
+## SIF-001 — Réacteur, ESD pression haute (KooN 2oo12 capteurs température)
+## .sil v2 — Safety Integrity Language for IEC 61508/61511
+## ============================================================================
+##
+## House Industrial-Pro (Bloomberg/LabVIEW/Siemens). Audit-grade. Stitclaude.
+##
+## Convention v2 :
+##   - identifiers       : minuscules, snake_case
+##   - blocs             : accolades { }
+##   - assignments       : kv-style avec `=`
+##   - architectures     : `1oo2`, `KooN(n=, k=, vote=)`
+##   - clonage           : `clone of` (unique keyword pour 1 ou N clones)
+##   - unités physiques  : suffixe obligatoire (ex: `1.0 FIT`, `6 yr`, `96 hr`)
+##   - commentaires      : `#`
+##   - alias math        : `lambda` ↔ `λ`, `beta` ↔ `β`, `beta_D` ↔ `βD`
+##                         (canonical = textuel pour audit print)
+##
+## ============================================================================
+
+sif SIF-001 {
+  ## ─── SRS — IEC 61511-1 §10 Safety Requirements Specification ───
+  srs {
+    identification {
+      title = "ESD réacteur de catalyse — surchauffe lit catalytique"
+    }
+    safety_requirement {
+      target_sil   = 2
+      demand_rate  = 0.1 /yr
+      # mode       = low_demand                 # auto-déduit du demand_rate
+    }
+  }
+
+  ## ─── Subsystem 1 : Sensor — KooN 2oo12 avec coverage ISA TR 84.00.07 ───
+  subsystem sensors : sensor {
+    architecture = KooN(n=12, k=2, vote=A)    # vote ∈ {S, A, M} — Safety / Availability / Maintenance
+
+    redundancy = coverage                      # alternative : reliability (default IEC 61508)
+    coverage {
+      zones        = 2
+      p_localized  = 0.85
+      beta_alpha   = 1.0
+    }
+
+    ccf {
+      beta    = 0.099
+      beta_D  = 0.10
+      method  = MAX                            # MAX | AVG | GEOMETRIC | MIN | QUADRATIC
+      assessment manual {
+        profile = field                        # field | logic
+        m       = 1
+        n       = 1
+      }
+    }
+
+    ## ── Channel 1 : définition canonique ──
+    channel "Channel 1" {
+      component PT-B_CA "Temperature transmitter" : type B {
+        library     = SIL-DB                     # source des defaults certifiés
+        param_mode  = factorized                 # factorized | developed
+
+        ## Tout ce qui diverge des defaults SIL-DB est isolé ici (audit trail)
+        override library {
+          lambda          = 1500 FIT             # 1 FIT = 1e-9 /h ; transmitter pression
+          lambda_D_ratio  = 0.25
+          DC_d            = 0.9
+          DC_s            = 0.0
+        }
+
+        ## Paramètres engineering-specific (pas dans library)
+        test stopped {
+          T0  = 0 yr
+          T1  = 6 yr
+        }
+
+        MTTR                  = 96 hr
+        proof_test_coverage   = 1.0
+        sigma                 = 1
+        omega_1               = 0
+        omega_2               = 0.01
+      }
+    }
+
+    ## ── Channels 2..12 : clones du Channel 1, tags re-générés ──
+    channels 2..12 clone of "Channel 1" rename component as "SIF-001_S{n}.1"
+    ## Pretty-printer audit (mode --expand) génère les 11 channels explicitement
+    ## dans le PDF audit DREAL — édition compacte, lecture audit complète.
+  }
+
+  ## ─── Subsystem 2 : Logic Solver — 1oo1 ───
+  subsystem logic_solver : logic {
+    architecture = 1oo1
+
+    ccf {
+      beta    = 0.05
+      beta_D  = 0.025
+      method  = MAX
+      assessment manual {
+        profile = logic
+        m       = 1
+        n       = 1
+      }
+    }
+
+    channel "Channel 1" {
+      component SIF-001_L2.1 "Safety PLC" : type B {
+        param_mode = developed                   # taux développés directement
+
+        lambda_DU = 112.5 FIT
+        lambda_DD = 262.5 FIT
+        lambda_SU = 0     FIT
+        lambda_SD = 1125  FIT
+
+        test stopped {
+          T0 = 0 yr
+          T1 = 6 yr
+        }
+
+        MTTR                  = 96 hr
+        proof_test_coverage   = 1.0
+      }
+    }
+  }
+
+  ## ─── Subsystem 3 : Actuator — 1oo2 avec sub-components (vannes ESD) ───
+  subsystem actuators : actuator {
+    architecture = 1oo2
+
+    ccf {
+      beta    = 0.05
+      beta_D  = 0.025
+      method  = MAX
+      assessment manual {
+        profile = field
+        m       = 2
+        n       = 2
+      }
+    }
+
+    channel "Channel 1" {
+      component SIF-001_A2.1 "On-off valve" : type A {
+        library     = SIL-DB
+        param_mode  = factorized
+
+        override library {
+          lambda          = 1500 FIT             # ESD on-off valve typique
+          lambda_D_ratio  = 0.25
+          DC_d            = 0.7
+          DC_s            = 1.0
+        }
+
+        test stopped {
+          T0 = 0 yr
+          T1 = 6 yr
+        }
+
+        MTTR                  = 96 hr
+        proof_test_coverage   = 1.0
+
+        ## ── Sub-components : électrovannes intégrées ──
+        sub_component SIF-001_A2.1-SOV "Solenoid valve" inherits parent {
+          ## Override partiel — seul T0/T1 différent du parent
+          test stopped {
+            T0 = 1 yr
+            T1 = 1 yr
+          }
+        }
+
+        sub_component SIF-001_A2.1-SOV2 "Solenoid valve" inherits parent { }
+        ## ↑ héritage 100% du parent — explicit, audit-readable sans contexte PRISM
+      }
+    }
+
+    channel "Channel 2" clone of "Channel 1" rename component as "SIF-001_A2.2"
+  }
+}
