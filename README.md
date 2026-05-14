@@ -18,15 +18,44 @@ I build open-source tools for functional safety and I'm developing a suite of pr
 
 ## 🔧 What I'm building
 
+### 📐 .sil — A language for functional safety *(invented)*
+
+I designed **`.sil`**, a domain-specific language that lets engineers write LOPA and SIF specifications as structured, versionable code — from hazard identification all the way to a fully compliant IEC 61511 Safety Instrumented Function.
+
+```sil
+lopa "High pressure on reactor R-101" {
+  initiating_event: "Control valve CV-201 fails open"  frequency: 1e-1/yr
+  layer "BPCS"          pfd: 1e-1
+  layer "Alarm + HMI"   pfd: 1e-1
+  target_mitigated_frequency: 1e-4/yr
+
+  sif "SIS-101" {
+    architecture: 1oo2
+    sensor:  lambda_DU: 5e-8  DC: 0.9  T1: 8760h
+    final_element: lambda_DU: 5e-8  DC: 0.9
+    required_sil: 2
+  }
+}
+```
+
+- **VSCode extension** — syntax highlighting, hover, diagnostics, IEC compliance checks inline
+- **Live UI preview** — designers see the SIF graphically as they type, no separate tool needed
+- **Full lifecycle in one file** — LOPA → SIL target → SIF design → proof test schedule
+- **Git-native** — diff your safety specs, review changes, track history like real engineering
+
+> A `.sil` file is more auditable than any Excel sheet and more transparent than PHA-Pro or exSILentia.
+
+---
+
 ### ⚙️ [sil-engine](https://github.com/Myrkh/PRISM_SIL_ENGINE)
 
-Open-source SIL calculation engine. The transparent, auditable core that powers everything else.
+Open-source SIL calculation engine. The auditable core that powers everything else.
 
 ![Python](https://img.shields.io/badge/Python_3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript_5-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![License LGPL](https://img.shields.io/badge/License-LGPL_v3-blue?style=flat-square)
 ![IEC 61508](https://img.shields.io/badge/IEC_61508-Validated-1d9e75?style=flat-square)
-[![CI](https://github.com/Myrkh/PRISM_SIL_ENGINE)](https://github.com/Myrkh/PRISM_SIL_ENGINE)
+[![CI](https://github.com/Myrkh/PRISM_SIL_ENGINE/actions/workflows/ci.yml/badge.svg)](https://github.com/Myrkh/PRISM_SIL_ENGINE/actions)
 
 ---
 
