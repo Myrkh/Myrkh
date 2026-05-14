@@ -26,7 +26,7 @@ Open-source SIL calculation engine. The transparent, auditable core that powers 
 ![TypeScript](https://img.shields.io/badge/TypeScript_5-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![License LGPL](https://img.shields.io/badge/License-LGPL_v3-blue?style=flat-square)
 ![IEC 61508](https://img.shields.io/badge/IEC_61508-Validated-1d9e75?style=flat-square)
-[![CI](https://github.com/Myrkh/PRISM_SIL_ENGINE/actions/workflows/ci.yml/badge.svg)](https://github.com/Myrkh/PRISM_SIL_ENGINE/actions)
+[![CI](https://github.com/Myrkh/PRISM_SIL_ENGINE)](https://github.com/Myrkh/PRISM_SIL_ENGINE)
 
 ---
 
