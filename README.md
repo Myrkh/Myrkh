@@ -10,7 +10,8 @@
 
 ## 👤 About me
 
-I'm a **process control and functional safety engineer**.
+I'm a process control and functional safety engineer — and a fullstack developer in my spare time.
+That combination is what makes PRISM possible: I know exactly what's broken in the industry, and I can build the fix myself. I'm developing a suite of products under the PRISM name — from SIL calculation to live monitoring in control rooms.
 
 I build open-source tools for functional safety and I'm developing a suite of products under the **PRISM** name — from SIL calculation to live monitoring in control rooms.
 
