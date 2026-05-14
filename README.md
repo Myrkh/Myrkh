@@ -23,21 +23,7 @@ I build open-source tools for functional safety and I'm developing a suite of pr
 
 I designed **`.sil`**, a domain-specific language that lets engineers write LOPA and SIF specifications as structured, versionable code — from hazard identification all the way to a fully compliant IEC 61511 Safety Instrumented Function.
 
-```sil
-lopa "High pressure on reactor R-101" {
-  initiating_event: "Control valve CV-201 fails open"  frequency: 1e-1/yr
-  layer "BPCS"          pfd: 1e-1
-  layer "Alarm + HMI"   pfd: 1e-1
-  target_mitigated_frequency: 1e-4/yr
-
-  sif "SIS-101" {
-    architecture: 1oo2
-    sensor:  lambda_DU: 5e-8  DC: 0.9  T1: 8760h
-    final_element: lambda_DU: 5e-8  DC: 0.9
-    required_sil: 2
-  }
-}
-```
+> 📄 See a real example: [SIF-001.sil](https://github.com/Myrkh/Myrkh/SIF-001.sil)
 
 - **VSCode extension** — syntax highlighting, hover, diagnostics, IEC compliance checks inline
 - **Live UI preview** — designers see the SIF graphically as they type, no separate tool needed
