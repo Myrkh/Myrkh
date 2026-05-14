@@ -23,7 +23,7 @@ I build open-source tools for functional safety and I'm developing a suite of pr
 
 I designed **`.sil`**, a domain-specific language that lets engineers write LOPA and SIF specifications as structured, versionable code — from hazard identification all the way to a fully compliant IEC 61511 Safety Instrumented Function.
 
-> 📄 See a real example: [SIF-001.sil](https://github.com/Myrkh/Myrkh/SIF-001.sil)
+> 📄 See a real example: [SIF-001.sil](https://github.com/Myrkh/Myrkh/blob/main/SIF-001.sil)
 
 - **VSCode extension** — syntax highlighting, hover, diagnostics, IEC compliance checks inline
 - **Live UI preview** — designers see the SIF graphically as they type, no separate tool needed
